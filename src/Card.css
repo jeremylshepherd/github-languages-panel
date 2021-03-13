@@ -1,0 +1,26 @@
+.language_card {    
+    border-radius: 17px;
+    background: linear-gradient(145deg, #555555, #474747);
+    box-shadow:  14px 14px 28px #434343,
+                -14px -14px 28px #5b5b5b;
+    display: flex;
+    flex-direction: column;
+    width: 600px;
+    margin: 0 auto;
+    align-items: start;
+    justify-content: space-between;
+    padding: 2em;
+    margin-top: 10px;
+    color: white;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.round {
+    width: 40px;
+    border-radius: 50%;
+}

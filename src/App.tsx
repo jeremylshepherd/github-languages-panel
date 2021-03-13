@@ -1,6 +1,7 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import Repos from './Components/Repos';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           Learn React
         </a>
       </header>
+      <Repos url={`${process.env.URL_BASE}${'jeremylshepherd'}${process.env.URL_OPTIONS}`} pat={`${process.env.PAT}`} />
     </div>
   );
 }
