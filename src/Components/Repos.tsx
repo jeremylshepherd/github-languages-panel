@@ -1,21 +1,21 @@
-import React, { Component, ReactNode } from 'react'
+import React, { PureComponent, ReactNode } from 'react'
 import getObjectTotals from '../helpers/getObjectTotals'
 import sortObject from '../helpers/sortObject'
-import { RepoProps, RepoState, Repo, RepoLanguage } from '../types'
+import { RepoProps, RepoState, RepoLanguage } from '../types'
 import Card from './Card'
 import ProgressBar from './ProgressBar'
 
-class Repos extends Component<RepoProps, RepoState> {
+class Repos extends PureComponent<RepoProps, RepoState> {
     constructor(props: RepoProps) {
         super(props)
 
         this.state = {
-            owner: '',
-            avatar: '',
+            avatar: './person-generic.jpg',
             repos: [],
             repoLanguages: [],
             languageSet: {},
-            total: 0
+            totalBytes: 0,
+            loading: true
         }
 
         this.getRepos = this.getRepos.bind(this);
@@ -27,11 +27,12 @@ class Repos extends Component<RepoProps, RepoState> {
     }
 
     async getRepos() : Promise<any> {
-        const { url, pat } = this.props;
-        let response = await fetch(url, { headers: { authorization: `token ${pat}`}});
+        const { REACT_APP_URL_BASE : url, REACT_APP_URL_OPTIONS : options, REACT_APP_PAT : pat } = process.env;
+        const {username} = this.props;
+        let response = await fetch(`${url}${username}${options}`, { headers: { authorization: `token ${pat}`}});
         let data = await response.json();
-        let { login, avatar_url } : { login: string, avatar_url: string } = data[0].owner;
-        this.setState({ owner: login, avatar: avatar_url });
+        let { avatar_url } : { avatar_url: string } = data[0].owner;
+        this.setState({ avatar: avatar_url });
         let minData = data.map((r : any) => {
             let { name, languages_url } = r;
             return { name, languages_url };
@@ -40,7 +41,7 @@ class Repos extends Component<RepoProps, RepoState> {
     }
 
     async getLanguage(url: string) : Promise<RepoLanguage> {
-        const { pat } = this.props;
+        const { REACT_APP_PAT : pat } = process.env;
         let response = await fetch(url, { headers: { authorization: `token ${pat}`}});
         let data = await response.json();
         return data;
@@ -57,16 +58,17 @@ class Repos extends Component<RepoProps, RepoState> {
     }
 
     setLanguages() {
-        let combined = getObjectTotals({}, this.state.repoLanguages);
-        let totalBytes = this.getTotalBytes(combined);
-        combined = sortObject(combined);
-        this.setState({ languageSet: combined, total: totalBytes });
+        let languageSet = getObjectTotals({}, this.state.repoLanguages);
+        let totalBytes = this.getTotalBytes(languageSet);
+        languageSet = sortObject(languageSet);
+        this.setState({ languageSet, totalBytes });
     }
 
     async processData() {
         await this.getRepos();
         await this.getRepoLanguages();
         this.setLanguages();
+        this.setState({ loading: false });
     }
 
     getTotalBytes(obj: RepoLanguage) : number {
@@ -79,20 +81,32 @@ class Repos extends Component<RepoProps, RepoState> {
 
     componentDidMount() {
         this.processData();
+    }    
+
+    componentDidUpdate(prevProps: any) {
+        if(prevProps.username !== this.props.username) {
+            this.setState({ loading:  true, avatar: './person-generic.jpg' });
+            this.processData();
+        }
     }
 
     render(): ReactNode {
         let copy = {...this.state.languageSet};
         let keys = Object.keys(copy);
-        let { total, owner, avatar } = this.state;
+        const {avatar, loading, totalBytes: total} = this.state;
+        const { username, width } = this.props;
         return (
-           <Card>
+            <Card width={width}>
                <span className="card-header">
                     <img src={avatar} className="round" alt="user avatar"/>
-                    <h2>{`${owner}'s`} Github Languages Profile</h2>
+                    <h2>{` ${username ?? 'User'}'s`} Github Languages Profile</h2>
                </span>
                 {
-                    keys.map(k => <ProgressBar key={k} width={440} percentage={copy[k]/total} label={k} bytes={copy[k]}/>)
+                    loading ?
+                    <span className="spinner-container">
+                        <i className="fas fa-spinner fa-spin fa-7x"/> 
+                    </span>:
+                    keys.map(k => <ProgressBar key={k} width={width * .75} percentage={copy[k]/total} label={k} bytes={copy[k]}/>)
                 }
             </Card>
         )

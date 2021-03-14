@@ -1,14 +1,14 @@
 export interface RepoProps {
-    url: string,
-    pat: string
+    username: string,
+    width: number
 }
 export interface RepoState {
-    owner: string,
     repos: Repo[],
     avatar: string,
     repoLanguages: RepoLanguage[],
     languageSet: RepoLanguage,
-    total: number
+    totalBytes: number,
+    loading: boolean
 }
 
 export type Repo = {

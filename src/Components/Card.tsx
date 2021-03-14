@@ -3,7 +3,7 @@ import '../Card.css'
 
 function Card(props: any) {
     return (
-        <div className="language_card">
+        <div className="language_card" style={{width: `${props.width}px`}}>
             {props.children}
         </div>
     )

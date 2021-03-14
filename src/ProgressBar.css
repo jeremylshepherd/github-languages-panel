@@ -1,10 +1,10 @@
 .bar-container {
+    color: white;
     display: flex;
     flex-direction: row;
     width: 100%;
     justify-content: space-between;
     align-items: center;
-    /* height: 30px; */
     height: 32px;
 }
 
@@ -50,7 +50,6 @@
 .progress:hover::after {
     opacity: 1;
 }
-
 
 .bar-percent {
     margin-left: 3px;
