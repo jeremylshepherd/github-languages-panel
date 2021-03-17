@@ -31,16 +31,3 @@
     width: 60px;
     border-radius: 50%;
 }
-
-.spinner-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 240px;
-}
-
-.spinner-container .fas {
-    width: 160px;
-    color: cornflowerblue;
-}

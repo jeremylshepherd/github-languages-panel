@@ -1,6 +1,7 @@
 import React, { PureComponent, ReactNode } from 'react'
 import getObjectTotals from '../helpers/getObjectTotals'
 import sortObject from '../helpers/sortObject'
+import Spinner from './Spinner'
 import { RepoProps, RepoState, RepoLanguage } from '../types'
 import Card from './Card'
 import ProgressBar from './ProgressBar'
@@ -103,9 +104,7 @@ class Repos extends PureComponent<RepoProps, RepoState> {
                </span>
                 {
                     loading ?
-                    <span className="spinner-container">
-                        <i className="fas fa-spinner fa-spin fa-7x"/> 
-                    </span>:
+                    <Spinner />:
                     keys.map(k => <ProgressBar key={k} width={width * .75} percentage={copy[k]/total} label={k} bytes={copy[k]}/>)
                 }
             </Card>
